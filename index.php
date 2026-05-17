@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>NLP Intelligent Web Application</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    >
+    <link rel="stylesheet" href="static/css/style.css">
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top shadow-sm">
+      <div class="container">
+        <a class="navbar-brand fw-bold" href="#home">NLP Assistant</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#mainNav"
+          aria-controls="mainNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a class="nav-link" href="#chat">Chatbot</a></li>
+            <li class="nav-item"><a class="nav-link" href="#analyzer">Text Analyzer</a></li>
+            <li class="nav-item"><a class="nav-link" href="#history">History</a></li>
+            <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <header id="home" class="hero-section">
+      <div class="container py-5">
+        <div class="row align-items-center g-4">
+          <div class="col-lg-7">
+            <p class="text-uppercase text-primary fw-semibold small mb-2">NLP-Based Intelligent Web Application</p>
+            <h1 class="display-5 fw-bold">HTML frontend, PHP backend, Supabase database, NLTK + spaCy NLP.</h1>
+            <p class="lead text-muted mt-3">
+              This project demonstrates tokenization, sentiment analysis, speech recognition,
+              text-to-speech, chatbot logic, keyword extraction, text classification, and
+              Supabase-backed conversation history.
+            </p>
+            <div class="d-flex flex-wrap gap-2 mt-4">
+              <a href="#chat" class="btn btn-primary btn-lg">Start Chat</a>
+              <a href="#analyzer" class="btn btn-outline-primary btn-lg">Analyze Text</a>
+            </div>
+          </div>
+          <div class="col-lg-5">
+            <div class="feature-card p-4">
+              <h2 class="h4 fw-bold mb-3">Selected Project Stack</h2>
+              <div class="row g-3">
+                <div class="col-6"><span class="badge text-bg-light feature-badge">Frontend: HTML</span></div>
+                <div class="col-6"><span class="badge text-bg-light feature-badge">Backend: PHP</span></div>
+                <div class="col-6"><span class="badge text-bg-light feature-badge">Database: Supabase</span></div>
+                <div class="col-6"><span class="badge text-bg-light feature-badge">NLP: NLTK</span></div>
+                <div class="col-6"><span class="badge text-bg-light feature-badge">NLP: spaCy</span></div>
+                <div class="col-6"><span class="badge text-bg-light feature-badge">Voice APIs</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container my-5">
+      <section id="chat" class="section-anchor mb-5">
+        <div class="row g-4">
+          <div class="col-lg-7">
+            <div class="card shadow-sm h-100">
+              <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <div>
+                  <h2 class="h4 mb-0">AI Chatbot System</h2>
+                  <small class="text-muted">PHP API with Supabase conversation storage</small>
+                </div>
+                <button id="clearHistoryBtn" class="btn btn-sm btn-outline-danger">Clear History</button>
+              </div>
+              <div id="chatBox" class="card-body chat-box" aria-live="polite"></div>
+              <div class="card-footer bg-white">
+                <form id="chatForm" class="chat-form">
+                  <div class="input-group">
+                    <input
+                      id="userInput"
+                      class="form-control"
+                      type="text"
+                      placeholder="Type a message or use the microphone..."
+                      autocomplete="off"
+                    >
+                    <button id="voiceBtn" class="btn btn-outline-secondary" type="button">Voice</button>
+                    <button class="btn btn-primary" type="submit">Send</button>
+                  </div>
+                  <div class="d-flex flex-wrap gap-2 mt-3">
+                    <button id="speakLastBtn" class="btn btn-outline-primary btn-sm" type="button">Speak Last Response</button>
+                    <span id="voiceStatus" class="small text-muted align-self-center">Voice input uses the browser Web Speech API.</span>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-5">
+            <div class="card shadow-sm h-100">
+              <div class="card-header bg-white">
+                <h2 class="h4 mb-0">NLP Processing Output</h2>
+                <small class="text-muted">Visible proof of required NLP concepts</small>
+              </div>
+              <div class="card-body">
+                <div class="row g-3 mb-3">
+                  <div class="col-sm-6">
+                    <div class="metric-card">
+                      <span class="metric-label">Sentiment</span>
+                      <strong id="sentimentResult">Waiting</strong>
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="metric-card">
+                      <span class="metric-label">Classification</span>
+                      <strong id="classificationResult">Waiting</strong>
+                    </div>
+                  </div>
+                </div>
+                <h3 class="h6">Tokenized Input</h3>
+                <div id="tokenList" class="token-area mb-3">Submit a message to see tokens.</div>
+                <h3 class="h6">Extracted Keywords</h3>
+                <div id="keywordList" class="token-area mb-3">Submit a message to see keywords.</div>
+                <h3 class="h6">Bot Response</h3>
+                <p id="responsePreview" class="response-preview mb-0">The generated response will appear here.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="analyzer" class="section-anchor mb-5">
+        <div class="card shadow-sm">
+          <div class="card-body p-4">
+            <div class="row g-4">
+              <div class="col-lg-5">
+                <h2 class="h4">Smart Text Analyzer</h2>
+                <p class="text-muted">
+                  Test NLTK tokenization, VADER sentiment analysis, spaCy keyword/entity
+                  processing, and text classification without saving a chat message.
+                </p>
+                <textarea
+                  id="analyzerInput"
+                  class="form-control"
+                  rows="7"
+                  placeholder="Example: I love this project because the chatbot is helpful and easy to use."
+                ></textarea>
+                <button id="analyzeBtn" class="btn btn-primary mt-3">Analyze Text</button>
+              </div>
+              <div class="col-lg-7">
+                <div id="analyzerOutput" class="analysis-output">
+                  <p class="text-muted mb-0">Analyzer results will appear here.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="history" class="section-anchor mb-5">
+        <div class="card shadow-sm">
+          <div class="card-body p-4">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+              <div>
+                <h2 class="h4 mb-0">Supabase Conversation History</h2>
+                <small class="text-muted">Records from the Supabase chats table</small>
+              </div>
+              <button id="refreshHistoryBtn" class="btn btn-outline-primary btn-sm">Refresh</button>
+            </div>
+            <div id="historyNotice" class="alert alert-warning d-none"></div>
+            <div class="table-responsive">
+              <table class="table table-hover align-middle">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>User Message</th>
+                    <th>Bot Response</th>
+                    <th>Sentiment</th>
+                    <th>Class</th>
+                    <th>Created</th>
+                  </tr>
+                </thead>
+                <tbody id="historyTable">
+                  <tr><td colspan="6" class="text-muted">No history loaded yet.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="about" class="section-anchor mb-5">
+        <div class="row g-4">
+          <div class="col-lg-6">
+            <div class="card shadow-sm h-100">
+              <div class="card-body p-4">
+                <h2 class="h4">How the System Works</h2>
+                <ol class="workflow-list">
+                  <li>User enters text or records voice using the microphone.</li>
+                  <li>JavaScript sends the input to a PHP API endpoint.</li>
+                  <li>PHP calls a Python NLP processor using NLTK and spaCy.</li>
+                  <li>The NLP processor returns tokens, sentiment, keywords, entities, and classification.</li>
+                  <li>PHP stores the conversation in Supabase through the REST API.</li>
+                  <li>The response is shown on screen and can be spoken aloud.</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="card shadow-sm h-100">
+              <div class="card-body p-4">
+                <h2 class="h4">Presentation Notes</h2>
+                <p class="text-muted">
+                  During defense, demonstrate text chat, microphone input, sentiment result,
+                  token list, keyword chips, classification result, Speak button, and Supabase
+                  history table.
+                </p>
+                <a class="btn btn-outline-primary" href="#chat">Return to Chatbot Demo</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="py-4 bg-dark text-white">
+      <div class="container d-flex flex-wrap justify-content-between gap-2">
+        <span>NLP-Based Intelligent Web Application Development</span>
+        <span>HTML + PHP + Supabase + NLTK + spaCy</span>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="static/js/script.js"></script>
+  </body>
+</html>

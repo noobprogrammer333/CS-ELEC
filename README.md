@@ -53,5 +53,5 @@ history. That generated database file is intentionally ignored by Git.
 ## Development
 
 - Keep generated files and local environment files out of version control.
-- Run `python -m py_compile app.py` for a quick syntax check.
+- Run `python3 -m py_compile app.py` for a quick syntax check.
 - Add tests alongside new implementation work where practical.

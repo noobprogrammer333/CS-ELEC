@@ -1,6 +1,2 @@
-streamlit
-SpeechRecognition
-gTTS
+Flask
 nltk
-ollama
-PyAudio

@@ -36,3 +36,4 @@ venv/
 
 # Application runtime data
 noteai_vault.db
+nlp_assistant.db

@@ -1,57 +1,84 @@
-# CS-ELEC
+# CS-ELEC NLP Assistant
 
-CS-ELEC contains NoteAI, a Streamlit-based intelligent knowledge vault
-assistant for capturing lesson notes, extracting linguistic metadata, and
-querying saved notes through a local Ollama model.
+NLP Assistant is a Flask-based web application for the project requirement
+"NLP-Based Intelligent Web Application Development." It demonstrates natural
+language processing through a chatbot, smart text analyzer, voice input,
+speech output, and database-backed conversation history.
 
-## Getting started
+## Implemented Requirements
+
+- Frontend: HTML, CSS, Bootstrap, JavaScript
+- Backend: Python Flask
+- Database: SQLite runtime database with SQL export in `database/nlp_assistant.sql`
+- NLP features:
+  - Tokenization
+  - Sentiment analysis
+  - Voice-to-text
+  - Text-to-speech
+  - Chatbot system
+  - Keyword extraction
+  - Text classification
+- Functional navigation: Chatbot, Text Analyzer, History, About
+- Required documentation: project documentation, flowchart, and ER diagram
+
+## Getting Started
 
 1. Clone the repository.
-2. Create and activate a Python virtual environment.
-3. Install the Python dependencies:
+2. Create and activate a Python virtual environment:
+
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate
+   ```
+
+3. Install dependencies:
 
    ```bash
    pip install -r requirements.txt
    ```
 
-4. Start Ollama and make sure at least one model is available:
+4. Run the web application:
 
    ```bash
-   ollama serve
-   ollama pull llama3
+   python3 app.py
    ```
 
-5. Run the Streamlit app:
+5. Open the app in a browser:
 
-   ```bash
-   streamlit run app.py
+   ```text
+   http://127.0.0.1:5000
    ```
 
-> Voice capture uses `PyAudio`, which may require PortAudio system libraries
-> before `pip install -r requirements.txt` succeeds on some machines.
-
-## Project structure
+## Project Structure
 
 ```text
-app.py            Streamlit NoteAI application
-requirements.txt  Python runtime dependencies
+app.py                         Flask app and API routes
+database.py                    SQLite persistence layer
+nlp_engine.py                  Tokenization, sentiment, keywords, classification, chatbot logic
+requirements.txt               Python dependencies
+templates/index.html           Bootstrap web interface
+static/css/style.css           Custom responsive styling
+static/js/script.js            AJAX, voice input, speech output, UI rendering
+database/nlp_assistant.sql     SQL export/schema deliverable
+docs/project_documentation.md  Project documentation content
+docs/system_flowchart.mmd      Mermaid system flowchart
+docs/er_diagram.mmd            Mermaid ER diagram
 ```
 
-The app creates `noteai_vault.db` locally at runtime for notes and chat
-history. That generated database file is intentionally ignored by Git.
+The app creates `nlp_assistant.db` locally at runtime. Generated database files
+are ignored by Git.
 
-## Features
+## Demo Checklist
 
-- Manual text note ingestion.
-- Microphone-based speech recognition note capture.
-- NLTK tokenization, keyword extraction, lemmatization, and VADER sentiment
-  analysis.
-- SQLite persistence for notes and chat history.
-- Local retrieval-augmented question answering through Ollama.
-- Text-to-speech playback for assistant answers.
+1. Send a chat message and show the bot response.
+2. Display tokenized input, sentiment, keywords, and classification.
+3. Use the Voice button to convert speech into text.
+4. Use Speak Last Response for text-to-speech output.
+5. Open the History section to show database records.
+6. Open the Smart Text Analyzer for standalone NLP analysis.
 
-## Development
+## Validation
 
-- Keep generated files and local environment files out of version control.
-- Run `python3 -m py_compile app.py` for a quick syntax check.
-- Add tests alongside new implementation work where practical.
+```bash
+python3 -m py_compile app.py database.py nlp_engine.py
+```

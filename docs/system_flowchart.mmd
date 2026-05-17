@@ -1,0 +1,22 @@
+flowchart TD
+    A[User opens web application] --> B{Input method}
+    B -->|Typed text| C[Enter message in chat box]
+    B -->|Voice input| D[Browser Web Speech API converts speech to text]
+    D --> C
+    C --> E[JavaScript sends message to Flask /api/chat]
+    E --> F[NLP processing module]
+    F --> G[Tokenization]
+    F --> H[Sentiment analysis]
+    F --> I[Keyword extraction]
+    F --> J[Text classification]
+    G --> K[Rule-based chatbot response]
+    H --> K
+    I --> K
+    J --> K
+    K --> L[Save chat and NLP metadata to database]
+    L --> M[Return JSON response to frontend]
+    M --> N[Display bot response and NLP output]
+    N --> O{Speak output?}
+    O -->|Yes| P[Browser Speech Synthesis API reads response aloud]
+    O -->|No| Q[End interaction]
+    P --> Q

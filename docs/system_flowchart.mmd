@@ -3,20 +3,21 @@ flowchart TD
     B -->|Typed text| C[Enter message in chat box]
     B -->|Voice input| D[Browser Web Speech API converts speech to text]
     D --> C
-    C --> E[JavaScript sends message to Flask /api/chat]
-    E --> F[NLP processing module]
-    F --> G[Tokenization]
-    F --> H[Sentiment analysis]
-    F --> I[Keyword extraction]
-    F --> J[Text classification]
-    G --> K[Rule-based chatbot response]
-    H --> K
-    I --> K
-    J --> K
-    K --> L[Save chat and NLP metadata to database]
-    L --> M[Return JSON response to frontend]
-    M --> N[Display bot response and NLP output]
-    N --> O{Speak output?}
-    O -->|Yes| P[Browser Speech Synthesis API reads response aloud]
-    O -->|No| Q[End interaction]
-    P --> Q
+    C --> E[JavaScript sends message to PHP api/chat.php]
+    E --> F[PHP backend validates input]
+    F --> G[PHP calls Python NLP processor]
+    G --> H[NLTK tokenization]
+    G --> I[NLTK VADER sentiment analysis]
+    G --> J[spaCy keyword and entity processing]
+    G --> K[Rule-based text classification]
+    H --> L[Rule-based chatbot response]
+    I --> L
+    J --> L
+    K --> L
+    L --> M[PHP saves chat and NLP metadata to Supabase]
+    M --> N[Return JSON response to frontend]
+    N --> O[Display bot response and NLP output]
+    O --> P{Speak output?}
+    P -->|Yes| Q[Browser Speech Synthesis API reads response aloud]
+    P -->|No| R[End interaction]
+    Q --> R

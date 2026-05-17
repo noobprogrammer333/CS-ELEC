@@ -7,6 +7,7 @@ const speakLastBtn = document.getElementById("speakLastBtn");
 const clearHistoryBtn = document.getElementById("clearHistoryBtn");
 const refreshHistoryBtn = document.getElementById("refreshHistoryBtn");
 const historyTable = document.getElementById("historyTable");
+const historyNotice = document.getElementById("historyNotice");
 const analyzeBtn = document.getElementById("analyzeBtn");
 const analyzerInput = document.getElementById("analyzerInput");
 const analyzerOutput = document.getElementById("analyzerOutput");
@@ -54,7 +55,7 @@ function updateAnalysisPanel(analysis) {
 async function sendChatMessage(message) {
   addChatMessage("user", message);
 
-  const response = await fetch("/api/chat", {
+  const response = await fetch("api/chat.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ message }),
@@ -67,14 +68,21 @@ async function sendChatMessage(message) {
 
   lastBotResponse = data.bot_response;
   addChatMessage("bot", data.bot_response);
+  if (data.storage && data.storage.warning) {
+    addChatMessage("bot", `Storage notice: ${data.storage.warning}`);
+  }
   updateAnalysisPanel(data.analysis);
   await loadHistory();
 }
 
 async function loadHistory() {
-  const response = await fetch("/api/history");
+  const response = await fetch("api/history.php");
   const data = await response.json();
   const history = data.history || [];
+  if (historyNotice) {
+    historyNotice.classList.toggle("d-none", !data.warning);
+    historyNotice.textContent = data.warning || "";
+  }
 
   if (history.length === 0) {
     historyTable.innerHTML = '<tr><td colspan="6" class="text-muted">No chat records found.</td></tr>';
@@ -180,6 +188,8 @@ function renderAnalyzerOutput(analysis) {
     </div>
     <h3 class="h6">Suggested Chatbot Response</h3>
     <p class="response-preview">${escapeHtml(analysis.response)}</p>
+    <h3 class="h6">NLP Tools</h3>
+    <p class="mb-0">${escapeHtml((analysis.nlp_tools || []).join(" + "))}</p>
   `;
 }
 
@@ -208,7 +218,7 @@ speakLastBtn.addEventListener("click", () => {
 
 clearHistoryBtn.addEventListener("click", async () => {
   if (!confirm("Clear all saved conversation history?")) return;
-  await fetch("/api/history", { method: "DELETE" });
+  await fetch("api/history.php", { method: "DELETE" });
   chatBox.innerHTML = "";
   await loadHistory();
 });
@@ -222,7 +232,7 @@ analyzeBtn.addEventListener("click", async () => {
     return;
   }
 
-  const response = await fetch("/api/analyze", {
+  const response = await fetch("api/analyze.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ message }),

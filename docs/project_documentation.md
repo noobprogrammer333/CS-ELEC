@@ -2,133 +2,140 @@
 
 ## Project Title
 
-NLP Assistant: Intelligent Chatbot and Text Analyzer
+NLP Assistant: PHP Chatbot and Text Analyzer with Supabase
 
 ## Project Overview
 
 This web application demonstrates Natural Language Processing (NLP) by
 accepting human language through typed text or browser microphone input,
-processing the language on a Flask backend, and returning intelligent analysis
-and chatbot responses. The system is designed for a live classroom defense and
-includes visible proof of each NLP step.
+processing the language through a PHP backend, calling Python NLP tools, and
+returning intelligent analysis and chatbot responses. Conversation history is
+stored in Supabase.
 
 ## Main Objective
 
 Build a functional web-based system that applies NLP concepts to understand,
 analyze, classify, and respond to user input in natural language.
 
-## Technology Stack
+## Selected Technology Stack
 
-- Selected Frontend: HTML
-- Supporting Frontend Assets: CSS, Bootstrap, and JavaScript for styling and
-  browser interactivity
-- Backend: Python Flask
-- NLP: NLTK with rule-based fallbacks
-- Database: SQLite runtime database plus SQL export in `database/nlp_assistant.sql`
-- Speech Features: Browser Web Speech API and Speech Synthesis API
+- Frontend: HTML
+- Supporting assets: CSS, Bootstrap, and JavaScript
+- Backend: PHP
+- Database: Supabase
+- NLP tools: NLTK and spaCy
+- Speech features: Browser Web Speech API and Speech Synthesis API
 
 ## Implemented NLP Concepts
 
 1. Tokenization
-   - The system breaks the user message into tokens and displays each token as a
-     visible chip in the NLP output panel.
+   - NLTK tokenizes the user message and the frontend displays each token.
 
 2. Sentiment Analysis
-   - The backend evaluates whether the message is Positive, Negative, or Neutral.
-   - NLTK VADER is used when available; a positive/negative word-list fallback is
-     included so the demo remains functional.
+   - NLTK VADER classifies messages as Positive, Negative, or Neutral.
+   - A word-list fallback is included for demo reliability.
 
 3. Voice-to-Text
    - The Voice button uses the browser microphone through the Web Speech API.
-   - The recognized speech is converted into text and placed in the chat input.
 
 4. Text-to-Speech
    - The Speak Last Response button reads the chatbot response aloud through the
      browser Speech Synthesis API.
 
 5. Chatbot System
-   - The chat interface accepts user messages, generates bot responses, and stores
-     each conversation in the database.
+   - The chat interface accepts user messages, generates bot responses, and saves
+     the conversation through the PHP backend.
 
 6. Keyword Extraction
-   - The NLP module removes stop words, lemmatizes terms when possible, ranks
-     important words, and displays the top keywords.
+   - spaCy processes the text and helps identify important terms after stop-word
+     filtering.
 
 7. Text Classification
-   - The system classifies messages into Complaint, Inquiry, Feedback, Command,
-     or General Message using transparent keyword rules.
+   - Rule-based classification labels messages as Complaint, Inquiry, Feedback,
+     Command, or General Message.
+
+8. Entity Extraction
+   - spaCy entities are included when the installed spaCy model supports entity
+     recognition.
 
 ## System Features
 
 - User input through text or voice
-- NLP processing endpoint
+- PHP NLP API endpoints
+- Python NLP processor using NLTK and spaCy
 - Chatbot response generation
 - Text output and speech output
-- Database storage for conversation history
-- Responsive user interface
+- Supabase storage for conversation history
+- Responsive HTML interface
 - Navigation system for Chatbot, Analyzer, History, and About sections
-- SQL export for database deliverable
+- Supabase SQL schema deliverable
 - System flowchart and ER diagram files
 
 ## System Workflow
 
 1. User types a message or records voice input.
-2. JavaScript sends the message to the Flask backend using `fetch`.
-3. Flask calls the NLP engine.
-4. The NLP engine performs tokenization, sentiment analysis, keyword extraction,
-   and classification.
-5. The chatbot generates a response from the NLP result.
-6. The database module saves the user message, bot response, and NLP metadata.
-7. The frontend displays the chat response and NLP analysis.
-8. The user may click Speak Last Response to hear the output.
+2. JavaScript sends the message to a PHP endpoint using `fetch`.
+3. PHP calls `nlp/nlp_processor.py`.
+4. The Python processor uses NLTK and spaCy for tokenization, sentiment,
+   keyword extraction, entity extraction, and classification.
+5. PHP stores the conversation and NLP metadata in Supabase through the REST API.
+6. The frontend displays the chat response and NLP analysis.
+7. The user may click Speak Last Response to hear the output.
 
 ## Backend Routes
 
 | Route | Method | Purpose |
 | --- | --- | --- |
-| `/` | GET | Loads the main web interface |
-| `/api/chat` | POST | Processes chat input, saves history, returns bot response |
-| `/api/analyze` | POST | Runs NLP analysis without saving chat history |
-| `/api/history` | GET | Returns saved conversation records |
-| `/api/history` | DELETE | Clears saved conversation records |
+| `/index.php` | GET | Loads the main HTML web interface |
+| `/api/chat.php` | POST | Processes chat input, saves to Supabase, returns bot response |
+| `/api/analyze.php` | POST | Runs NLP analysis without saving chat history |
+| `/api/history.php` | GET | Returns saved Supabase conversation records |
+| `/api/history.php` | DELETE | Clears saved Supabase conversation records |
 
-## Database Design
+## Supabase Database Design
 
 Table: `chats`
 
 | Field | Type | Description |
 | --- | --- | --- |
-| `id` | Integer | Primary key |
-| `user_message` | Text | User input |
-| `bot_response` | Text | Generated chatbot answer |
-| `tokens` | Text | Comma-separated token list |
-| `keywords` | Text | Comma-separated keyword list |
-| `sentiment` | Varchar | Positive, Negative, or Neutral |
-| `sentiment_score` | Real/Decimal | Numeric sentiment score |
-| `classification` | Varchar | Message category |
-| `created_at` | Timestamp | Record creation time |
+| `id` | bigint | Primary key |
+| `user_message` | text | User input |
+| `bot_response` | text | Generated chatbot answer |
+| `tokens` | jsonb | Token list |
+| `keywords` | jsonb | Keyword list |
+| `sentiment` | varchar | Positive, Negative, or Neutral |
+| `sentiment_score` | numeric | Numeric sentiment score |
+| `classification` | varchar | Message category |
+| `entities` | jsonb | spaCy entities |
+| `created_at` | timestamptz | Record creation time |
 
 ## How to Run
 
 ```bash
+cp .env.example .env
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-python3 app.py
+python3 -m spacy download en_core_web_sm
+php -S 127.0.0.1:8000
 ```
 
-Open `http://127.0.0.1:5000` in a browser.
+Before running, create a Supabase project, run `database/nlp_assistant.sql` in
+the Supabase SQL Editor, and place your Supabase URL/key in `.env`.
+
+Open `http://127.0.0.1:8000` in a browser.
 
 ## Defense Demonstration Script
 
-1. Open the home page and explain the navigation.
+1. Open the home page and explain the selected stack: HTML, PHP, Supabase,
+   NLTK, and spaCy.
 2. Type: `Hello, I love this helpful NLP chatbot`.
 3. Show the bot reply, tokens, sentiment, keywords, and classification.
 4. Click Speak Last Response.
 5. Click Voice and speak a short message if the browser supports microphone
    access.
 6. Open Smart Text Analyzer and analyze another sentence.
-7. Open Database Conversation History and show saved chat records.
+7. Open Supabase Conversation History and show saved records.
 8. Explain the SQL export and diagrams in the repository.
 
 ## Common Oral Defense Answers
@@ -140,9 +147,9 @@ analyze, and respond to human language.
 
 ### How is NLP applied in this system?
 
-The system tokenizes user input, detects sentiment, extracts keywords,
-classifies the message, and uses those NLP results to generate a chatbot
-response.
+The PHP backend sends user input to a Python NLP processor. NLTK performs
+tokenization and sentiment analysis, while spaCy helps with keyword and entity
+processing. The results guide the chatbot response.
 
 ### How does the chatbot generate responses?
 
@@ -153,11 +160,10 @@ sentiment, keywords, and classification, then chooses an appropriate response.
 
 The system uses NLTK VADER when available. VADER returns a compound polarity
 score. Positive scores produce Positive sentiment, negative scores produce
-Negative sentiment, and near-zero scores produce Neutral sentiment. A word-list
-fallback is included for reliability.
+Negative sentiment, and near-zero scores produce Neutral sentiment.
 
 ### How can the system be improved?
 
-Future improvements could add user login, MySQL runtime configuration, a trained
-machine-learning classifier, larger intent rules, multilingual NLP, or an LLM API
-for more advanced responses.
+Future improvements could add login, stricter Supabase row-level security, a
+trained machine-learning classifier, multilingual NLP, or an LLM API for more
+advanced responses.

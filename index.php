@@ -8,7 +8,7 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
     >
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="static/css/style.css">
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top shadow-sm">
@@ -41,11 +41,11 @@
         <div class="row align-items-center g-4">
           <div class="col-lg-7">
             <p class="text-uppercase text-primary fw-semibold small mb-2">NLP-Based Intelligent Web Application</p>
-            <h1 class="display-5 fw-bold">Analyze text, chat naturally, and speak with an NLP assistant.</h1>
+            <h1 class="display-5 fw-bold">HTML frontend, PHP backend, Supabase database, NLTK + spaCy NLP.</h1>
             <p class="lead text-muted mt-3">
               This project demonstrates tokenization, sentiment analysis, speech recognition,
               text-to-speech, chatbot logic, keyword extraction, text classification, and
-              database-backed conversation history.
+              Supabase-backed conversation history.
             </p>
             <div class="d-flex flex-wrap gap-2 mt-4">
               <a href="#chat" class="btn btn-primary btn-lg">Start Chat</a>
@@ -54,16 +54,14 @@
           </div>
           <div class="col-lg-5">
             <div class="feature-card p-4">
-              <h2 class="h4 fw-bold mb-3">Implemented NLP Features</h2>
+              <h2 class="h4 fw-bold mb-3">Selected Project Stack</h2>
               <div class="row g-3">
-                <div class="col-6"><span class="badge text-bg-light feature-badge">Tokenization</span></div>
-                <div class="col-6"><span class="badge text-bg-light feature-badge">Sentiment</span></div>
-                <div class="col-6"><span class="badge text-bg-light feature-badge">Voice-to-Text</span></div>
-                <div class="col-6"><span class="badge text-bg-light feature-badge">Text-to-Speech</span></div>
-                <div class="col-6"><span class="badge text-bg-light feature-badge">Chatbot</span></div>
-                <div class="col-6"><span class="badge text-bg-light feature-badge">Keywords</span></div>
-                <div class="col-6"><span class="badge text-bg-light feature-badge">Classification</span></div>
-                <div class="col-6"><span class="badge text-bg-light feature-badge">Database</span></div>
+                <div class="col-6"><span class="badge text-bg-light feature-badge">Frontend: HTML</span></div>
+                <div class="col-6"><span class="badge text-bg-light feature-badge">Backend: PHP</span></div>
+                <div class="col-6"><span class="badge text-bg-light feature-badge">Database: Supabase</span></div>
+                <div class="col-6"><span class="badge text-bg-light feature-badge">NLP: NLTK</span></div>
+                <div class="col-6"><span class="badge text-bg-light feature-badge">NLP: spaCy</span></div>
+                <div class="col-6"><span class="badge text-bg-light feature-badge">Voice APIs</span></div>
               </div>
             </div>
           </div>
@@ -79,7 +77,7 @@
               <div class="card-header bg-white d-flex justify-content-between align-items-center">
                 <div>
                   <h2 class="h4 mb-0">AI Chatbot System</h2>
-                  <small class="text-muted">User vs bot chat with database storage</small>
+                  <small class="text-muted">PHP API with Supabase conversation storage</small>
                 </div>
                 <button id="clearHistoryBtn" class="btn btn-sm btn-outline-danger">Clear History</button>
               </div>
@@ -146,8 +144,8 @@
               <div class="col-lg-5">
                 <h2 class="h4">Smart Text Analyzer</h2>
                 <p class="text-muted">
-                  Use this standalone tool to test tokenization, sentiment analysis,
-                  keyword extraction, and classification without sending a chat message.
+                  Test NLTK tokenization, VADER sentiment analysis, spaCy keyword/entity
+                  processing, and text classification without saving a chat message.
                 </p>
                 <textarea
                   id="analyzerInput"
@@ -172,11 +170,12 @@
           <div class="card-body p-4">
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
               <div>
-                <h2 class="h4 mb-0">Database Conversation History</h2>
-                <small class="text-muted">Saved records from the chats table</small>
+                <h2 class="h4 mb-0">Supabase Conversation History</h2>
+                <small class="text-muted">Records from the Supabase chats table</small>
               </div>
               <button id="refreshHistoryBtn" class="btn btn-outline-primary btn-sm">Refresh</button>
             </div>
+            <div id="historyNotice" class="alert alert-warning d-none"></div>
             <div class="table-responsive">
               <table class="table table-hover align-middle">
                 <thead>
@@ -206,10 +205,10 @@
                 <h2 class="h4">How the System Works</h2>
                 <ol class="workflow-list">
                   <li>User enters text or records voice using the microphone.</li>
-                  <li>JavaScript sends the input to the Flask backend.</li>
-                  <li>The NLP module tokenizes, analyzes sentiment, extracts keywords, and classifies text.</li>
-                  <li>The chatbot response is generated from intent, sentiment, and keywords.</li>
-                  <li>The conversation and NLP results are saved to the database.</li>
+                  <li>JavaScript sends the input to a PHP API endpoint.</li>
+                  <li>PHP calls a Python NLP processor using NLTK and spaCy.</li>
+                  <li>The NLP processor returns tokens, sentiment, keywords, entities, and classification.</li>
+                  <li>PHP stores the conversation in Supabase through the REST API.</li>
                   <li>The response is shown on screen and can be spoken aloud.</li>
                 </ol>
               </div>
@@ -220,8 +219,8 @@
               <div class="card-body p-4">
                 <h2 class="h4">Presentation Notes</h2>
                 <p class="text-muted">
-                  During defense, demonstrate a text chat, microphone input, sentiment result,
-                  token list, keyword chips, classification result, Speak button, and database
+                  During defense, demonstrate text chat, microphone input, sentiment result,
+                  token list, keyword chips, classification result, Speak button, and Supabase
                   history table.
                 </p>
                 <a class="btn btn-outline-primary" href="#chat">Return to Chatbot Demo</a>
@@ -235,11 +234,11 @@
     <footer class="py-4 bg-dark text-white">
       <div class="container d-flex flex-wrap justify-content-between gap-2">
         <span>NLP-Based Intelligent Web Application Development</span>
-        <span>Flask + Bootstrap + JavaScript + SQLite</span>
+        <span>HTML + PHP + Supabase + NLTK + spaCy</span>
       </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="static/js/script.js"></script>
   </body>
 </html>

@@ -1,12 +1,13 @@
 erDiagram
     CHATS {
-        int id PK
+        bigint id PK
         text user_message
         text bot_response
-        text tokens
-        text keywords
+        jsonb tokens
+        jsonb keywords
         varchar sentiment
-        decimal sentiment_score
+        numeric sentiment_score
         varchar classification
-        timestamp created_at
+        jsonb entities
+        timestamptz created_at
     }

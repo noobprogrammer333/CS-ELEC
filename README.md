@@ -7,7 +7,9 @@ speech output, and database-backed conversation history.
 
 ## Implemented Requirements
 
-- Frontend: HTML, CSS, Bootstrap, JavaScript
+- Selected frontend: HTML
+- Supporting frontend assets: CSS, Bootstrap, and JavaScript for styling and
+  browser interactivity
 - Backend: Python Flask
 - Database: SQLite runtime database with SQL export in `database/nlp_assistant.sql`
 - NLP features:

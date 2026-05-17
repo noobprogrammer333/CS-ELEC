@@ -12,7 +12,7 @@ endobj
 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
 endobj
 5 0 obj
-<< /Length 1940 >>
+<< /Length 2028 >>
 stream
 BT
 /F1 11 Tf
@@ -36,7 +36,9 @@ T*
 T*
 (Technology Stack:) Tj
 T*
-(- Frontend: HTML, CSS, Bootstrap, JavaScript) Tj
+(- Selected Frontend: HTML) Tj
+T*
+(- Supporting Frontend Assets: CSS, Bootstrap, and JavaScript for styling and browser interactivity) Tj
 T*
 (- Backend: Python Flask) Tj
 T*
@@ -110,5 +112,5 @@ xref
 trailer
 << /Size 6 /Root 1 0 R >>
 startxref
-2303
+2391
 %%EOF

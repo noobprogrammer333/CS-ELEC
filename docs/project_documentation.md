@@ -19,7 +19,9 @@ analyze, classify, and respond to user input in natural language.
 
 ## Technology Stack
 
-- Frontend: HTML, CSS, Bootstrap, JavaScript
+- Selected Frontend: HTML
+- Supporting Frontend Assets: CSS, Bootstrap, and JavaScript for styling and
+  browser interactivity
 - Backend: Python Flask
 - NLP: NLTK with rule-based fallbacks
 - Database: SQLite runtime database plus SQL export in `database/nlp_assistant.sql`

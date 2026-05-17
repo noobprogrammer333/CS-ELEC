@@ -3,114 +3,114 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>NLP Intelligent Web Application</title>
+    <title>NoteAI Lessons</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
     >
     <link rel="stylesheet" href="static/css/style.css">
   </head>
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top shadow-sm">
-      <div class="container">
-        <a class="navbar-brand fw-bold" href="#home">NoteAI Lessons</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#mainNav"
-          aria-controls="mainNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
+  <body class="app-body">
+    <div class="app-shell">
+      <aside id="appSidebar" class="app-sidebar glass-panel">
+        <div class="sidebar-brand">
+          <div class="brand-icon neon-glow">
+            <i data-lucide="settings"></i>
+          </div>
+          <h2 class="sidebar-label">System</h2>
+        </div>
+
+        <button id="sidebarToggle" class="sidebar-toggle neon-glow" type="button" aria-label="Toggle sidebar">
+          <i id="sidebarToggleIcon" data-lucide="panel-left-close"></i>
         </button>
-        <div class="collapse navbar-collapse" id="mainNav">
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item"><a class="nav-link" href="#notes">Notes</a></li>
-            <li class="nav-item"><a class="nav-link" href="#assistant">AI Assistant</a></li>
-            <li class="nav-item"><a class="nav-link" href="#history">Q&A History</a></li>
-            <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
-          </ul>
-        </div>
-      </div>
-    </nav>
 
-    <header id="home" class="hero-section">
-      <div class="container py-5">
-        <div class="row align-items-center g-4">
-          <div class="col-lg-7">
-            <p class="text-uppercase text-primary fw-semibold small mb-2">NLP-Based Intelligent Web Application</p>
-            <h1 class="display-5 fw-bold">A phone-style notes app with speech-to-text and an AI lesson assistant.</h1>
-            <p class="lead text-muted mt-3">
-              Create lesson notes by typing or speaking. The system analyzes each note with
-              tokenization, lemmatization, sentiment analysis, keyword extraction, and
-              classification. Then ask the assistant a question and it scans your notes for
-              the lesson you need.
-            </p>
-            <div class="d-flex flex-wrap gap-2 mt-4">
-              <a href="#notes" class="btn btn-primary btn-lg">Create Notes</a>
-              <a href="#assistant" class="btn btn-outline-primary btn-lg">Ask Assistant</a>
+        <div class="sidebar-expanded">
+          <div class="sidebar-section">
+            <label class="sidebar-heading">System Status</label>
+            <div class="status-card">
+              <span class="status-dot"></span>
+              <span>NoteAI Brain: Online</span>
             </div>
           </div>
-          <div class="col-lg-5">
-            <div class="feature-card p-4">
-              <h2 class="h4 fw-bold mb-3">Selected Project Stack</h2>
-              <div class="row g-3">
-                <div class="col-6"><span class="badge text-bg-light feature-badge">Frontend: HTML</span></div>
-                <div class="col-6"><span class="badge text-bg-light feature-badge">Backend: PHP</span></div>
-                <div class="col-6"><span class="badge text-bg-light feature-badge">Database: Supabase</span></div>
-                <div class="col-6"><span class="badge text-bg-light feature-badge">NLP: NLTK</span></div>
-                <div class="col-6"><span class="badge text-bg-light feature-badge">NLP: spaCy</span></div>
-                <div class="col-6"><span class="badge text-bg-light feature-badge">Voice APIs</span></div>
-              </div>
+
+          <div class="sidebar-section">
+            <label class="sidebar-heading" for="selectedModel">Active AI Mode</label>
+            <div class="select-shell">
+              <select id="selectedModel" class="form-select">
+                <option value="note-retrieval">Supabase Note Retrieval</option>
+                <option value="local-nlp">NLTK + spaCy NLP</option>
+              </select>
+              <i data-lucide="chevron-down"></i>
             </div>
           </div>
         </div>
-      </div>
-    </header>
 
-    <main class="container my-5">
-      <section id="notes" class="section-anchor mb-5">
-        <div class="row g-4">
-          <div class="col-lg-7">
-            <div class="card shadow-sm h-100">
-              <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                <div>
-                  <h2 class="h4 mb-0">Lesson Notes</h2>
-                  <small class="text-muted">Type or speak notes like a cellphone notes app</small>
+        <div class="sidebar-collapsed">
+          <span class="status-dot" title="System Online"></span>
+          <i data-lucide="brain-circuit"></i>
+        </div>
+
+        <button id="clearNotesBtn" class="sidebar-danger" type="button">
+          <i data-lucide="trash-2"></i>
+          <span class="sidebar-label">Clear All Notes</span>
+        </button>
+      </aside>
+
+      <main class="app-main">
+        <header class="app-header">
+          <div>
+            <h1 id="viewTitle" class="app-title neon-text">📝 NoteAI Assistant</h1>
+            <div class="ready-line">
+              <span class="status-dot"></span>
+              <span id="viewSubtitle">Ready to take notes</span>
+            </div>
+          </div>
+
+          <button id="viewToggleBtn" class="round-action glass-panel neon-glow" type="button" aria-label="Toggle view">
+            <i id="viewToggleIcon" data-lucide="message-square"></i>
+          </button>
+        </header>
+
+        <div class="app-content">
+          <section id="notesView" class="view-panel is-active">
+            <div class="note-composer-wrap">
+              <div class="composer-glow"></div>
+              <form id="noteForm" class="note-composer glass-panel">
+                <input
+                  id="noteTitle"
+                  class="title-input"
+                  type="text"
+                  placeholder="Optional note title..."
+                  autocomplete="off"
+                >
+                <textarea
+                  id="noteContent"
+                  class="note-textarea custom-scrollbar"
+                  placeholder="What did you learn today? Start typing or use the mic..."
+                ></textarea>
+                <div class="composer-actions">
+                  <button id="noteVoiceBtn" class="dictation-button" type="button">
+                    <i data-lucide="mic"></i>
+                    <span>Voice Dictation</span>
+                  </button>
+                  <button class="save-note-button" type="submit">
+                    <i data-lucide="plus"></i>
+                    Save Typed Note
+                  </button>
                 </div>
-                <button id="clearNotesBtn" class="btn btn-sm btn-outline-danger">Clear Notes</button>
-              </div>
-              <div class="card-body">
-                <form id="noteForm">
-                  <label class="form-label fw-semibold" for="noteTitle">Note title</label>
-                  <input id="noteTitle" class="form-control mb-3" type="text" placeholder="Example: Software Implementation Lesson">
-                  <label class="form-label fw-semibold" for="noteContent">Note content</label>
-                  <textarea
-                    id="noteContent"
-                    class="form-control note-editor"
-                    rows="10"
-                    placeholder="Type your lesson note here, or press Dictate Note and speak..."
-                  ></textarea>
-                  <div class="d-flex flex-wrap gap-2 mt-3">
-                    <button id="noteVoiceBtn" class="btn btn-outline-secondary" type="button">Dictate Note</button>
-                    <button class="btn btn-primary" type="submit">Save Note</button>
-                    <span id="noteVoiceStatus" class="small text-muted align-self-center">Speech becomes text inside the note.</span>
-                  </div>
-                </form>
+                <div id="noteVoiceStatus" class="voice-status">Speech becomes text inside the note.</div>
                 <div id="noteStorageNotice" class="alert alert-warning d-none mt-3"></div>
-              </div>
+              </form>
             </div>
-          </div>
 
-          <div class="col-lg-5">
-            <div class="card shadow-sm h-100">
-              <div class="card-header bg-white">
-                <h2 class="h4 mb-0">Saved Note NLP Output</h2>
-                <small class="text-muted">Visible proof of NLP concepts for every note</small>
-              </div>
-              <div class="card-body">
+            <div class="note-dashboard">
+              <section class="glass-panel p-4 nlp-panel">
+                <div class="panel-heading">
+                  <div>
+                    <h2 class="h5 mb-1">Saved Note NLP Output</h2>
+                    <small>Tokenization, lemmatization, sentiment, and keywords</small>
+                  </div>
+                </div>
                 <div class="row g-3 mb-3">
                   <div class="col-sm-6">
                     <div class="metric-card">
@@ -126,150 +126,109 @@
                   </div>
                 </div>
                 <h3 class="h6">Tokenized Note</h3>
-                <div id="tokenList" class="token-area mb-3">Save a note to see tokens.</div>
+                <div id="tokenList" class="token-area mb-3 custom-scrollbar">Save a note to see tokens.</div>
                 <h3 class="h6">Lemmatized Terms</h3>
-                <div id="lemmaList" class="token-area mb-3">Save a note to see lemmas.</div>
+                <div id="lemmaList" class="token-area mb-3 custom-scrollbar">Save a note to see lemmas.</div>
                 <h3 class="h6">Extracted Keywords</h3>
-                <div id="keywordList" class="token-area mb-3">Save a note to see keywords.</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+                <div id="keywordList" class="token-area custom-scrollbar">Save a note to see keywords.</div>
+              </section>
 
-      <section id="saved-notes" class="section-anchor mb-5">
-        <div class="card shadow-sm">
-          <div class="card-body p-4">
-            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-              <div>
-                <h2 class="h4 mb-0">Saved Notes Vault</h2>
-                <small class="text-muted">The assistant scans these notes when answering questions</small>
-              </div>
-              <button id="refreshNotesBtn" class="btn btn-outline-primary btn-sm">Refresh Notes</button>
+              <section class="notebook-panel">
+                <div class="notebook-heading">
+                  <div>
+                    <i data-lucide="notebook"></i>
+                    <span>Your Notebook</span>
+                  </div>
+                  <button id="refreshNotesBtn" class="shortcut-button" type="button">Refresh Notes</button>
+                </div>
+                <div id="notesNotice" class="alert alert-warning d-none"></div>
+                <div id="notesList" class="notes-list custom-scrollbar"></div>
+              </section>
             </div>
-            <div id="notesNotice" class="alert alert-warning d-none"></div>
-            <div id="notesList" class="row g-3"></div>
-          </div>
-        </div>
-      </section>
+          </section>
 
-      <section id="assistant" class="section-anchor mb-5">
-        <div class="row g-4">
-          <div class="col-lg-7">
-            <div class="card shadow-sm h-100">
-              <div class="card-header bg-white">
-                <h2 class="h4 mb-0">AI Lesson Assistant</h2>
-                <small class="text-muted">Ask directly and the assistant scans your notes</small>
-              </div>
-              <div id="chatBox" class="card-body chat-box" aria-live="polite"></div>
-              <div class="card-footer bg-white">
-                <form id="chatForm" class="chat-form">
-                  <div class="input-group">
-                    <input
-                      id="userInput"
-                      class="form-control"
-                      type="text"
-                      placeholder="Ask about a lesson from your saved notes..."
-                      autocomplete="off"
-                    >
-                    <button id="voiceBtn" class="btn btn-outline-secondary" type="button">Voice Question</button>
-                    <button class="btn btn-primary" type="submit">Ask</button>
+          <section id="chatView" class="view-panel">
+            <div class="chat-layout">
+              <div class="chat-column">
+                <div id="chatBox" class="chat-box custom-scrollbar" aria-live="polite">
+                  <div class="empty-chat">
+                    <div class="empty-chat-icon glass-panel neon-glow">
+                      <i data-lucide="brain-circuit"></i>
+                    </div>
+                    <p>Ready to assist you with your knowledge database...</p>
                   </div>
-                  <div class="d-flex flex-wrap gap-2 mt-3">
-                    <button id="speakLastBtn" class="btn btn-outline-primary btn-sm" type="button">Speak Answer</button>
-                    <span id="voiceStatus" class="small text-muted align-self-center">Ask with text or voice.</span>
-                  </div>
+                </div>
+
+                <div class="shortcut-row">
+                  <button class="shortcut-button" data-shortcut="Can you provide a concise summary of all my notes?">Summarize Notes</button>
+                  <button class="shortcut-button" data-shortcut="What are the most frequent keywords in my notebook?">Find Keywords</button>
+                  <button class="shortcut-button" data-shortcut="Can you explain the main concepts from my most recent note?">Explain Lesson</button>
+                  <button class="shortcut-button" data-shortcut="Look through my notes and analyze the main topics discussed.">Analyze Topic</button>
+                  <button class="shortcut-button" data-shortcut="Give me 3 review questions based on my saved notes.">Review Notes</button>
+                </div>
+
+                <form id="chatForm" class="chat-input-shell glass-panel">
+                  <input
+                    id="userInput"
+                    type="text"
+                    placeholder="Ask NoteAI anything..."
+                    autocomplete="off"
+                  >
+                  <button id="voiceBtn" class="icon-action" type="button" aria-label="Voice question">
+                    <i data-lucide="mic"></i>
+                  </button>
+                  <button class="send-action" type="submit" aria-label="Send question">
+                    <i data-lucide="send"></i>
+                  </button>
                 </form>
+                <div class="chat-meta">
+                  <span id="voiceStatus">Ask with text or voice.</span>
+                  <button id="speakLastBtn" class="shortcut-button" type="button">Speak Answer</button>
+                </div>
               </div>
+
+              <aside class="assistant-side">
+                <section class="glass-panel p-4 mb-4">
+                  <h2 class="h5 mb-1">Matched Notes</h2>
+                  <small>Sources used by the assistant answer</small>
+                  <div id="matchedNotes" class="matched-notes-list custom-scrollbar mt-3">
+                    <p class="text-muted mb-0">Ask a question to see matching notes.</p>
+                  </div>
+                </section>
+
+                <section class="glass-panel p-4">
+                  <div class="d-flex justify-content-between align-items-center gap-2 mb-3">
+                    <div>
+                      <h2 class="h5 mb-1">Q&A History</h2>
+                      <small>Stored after note retrieval</small>
+                    </div>
+                    <button id="refreshHistoryBtn" class="shortcut-button" type="button">Refresh</button>
+                  </div>
+                  <div id="historyNotice" class="alert alert-warning d-none"></div>
+                  <div class="table-responsive custom-scrollbar history-table-wrap">
+                    <table class="table table-hover align-middle">
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Question</th>
+                          <th>Answer</th>
+                          <th>Matched</th>
+                        </tr>
+                      </thead>
+                      <tbody id="historyTable">
+                        <tr><td colspan="4" class="text-muted">No history loaded yet.</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+              </aside>
             </div>
-          </div>
-          <div class="col-lg-5">
-            <div class="card shadow-sm h-100">
-              <div class="card-header bg-white">
-                <h2 class="h4 mb-0">Matched Notes</h2>
-                <small class="text-muted">Sources used by the assistant answer</small>
-              </div>
-              <div id="matchedNotes" class="card-body">
-                <p class="text-muted mb-0">Ask a question to see matching notes.</p>
-              </div>
-            </div>
-          </div>
+          </section>
         </div>
-      </section>
+      </main>
+    </div>
 
-      <section id="history" class="section-anchor mb-5">
-        <div class="card shadow-sm">
-          <div class="card-body p-4">
-            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-              <div>
-                <h2 class="h4 mb-0">Assistant Q&A History</h2>
-                <small class="text-muted">Questions and answers stored after note retrieval</small>
-              </div>
-              <button id="refreshHistoryBtn" class="btn btn-outline-primary btn-sm">Refresh</button>
-            </div>
-            <div id="historyNotice" class="alert alert-warning d-none"></div>
-            <div class="table-responsive">
-              <table class="table table-hover align-middle">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Question</th>
-                    <th>Answer</th>
-                    <th>Matched Notes</th>
-                    <th>Created</th>
-                  </tr>
-                </thead>
-                <tbody id="historyTable">
-                  <tr><td colspan="5" class="text-muted">No history loaded yet.</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="about" class="section-anchor mb-5">
-        <div class="row g-4">
-          <div class="col-lg-6">
-            <div class="card shadow-sm h-100">
-              <div class="card-body p-4">
-                <h2 class="h4">How the System Works</h2>
-                <ol class="workflow-list">
-                  <li>User types or dictates a lesson into the note editor.</li>
-                  <li>PHP sends the note to the NLTK + spaCy processor.</li>
-                  <li>The note is saved in Supabase with tokens, lemmas, sentiment, keywords, and classification.</li>
-                  <li>User asks the assistant a question.</li>
-                  <li>The assistant scans saved notes and returns the best lesson matches.</li>
-                  <li>The answer is shown on screen and can be spoken aloud.</li>
-                </ol>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-6">
-            <div class="card shadow-sm h-100">
-              <div class="card-body p-4">
-                <h2 class="h4">Presentation Notes</h2>
-                <p class="text-muted">
-                  During defense, demonstrate creating a note by speech-to-text, saving NLP
-                  metadata, asking the assistant about the lesson, showing matched notes, and
-                  using text-to-speech for the answer.
-                </p>
-                <a class="btn btn-outline-primary" href="#notes">Return to Notes Demo</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <footer class="py-4 bg-dark text-white">
-      <div class="container d-flex flex-wrap justify-content-between gap-2">
-        <span>NLP-Based Intelligent Web Application Development</span>
-        <span>HTML + PHP + Supabase + NLTK + spaCy</span>
-      </div>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <script src="static/js/script.js"></script>
   </body>
 </html>

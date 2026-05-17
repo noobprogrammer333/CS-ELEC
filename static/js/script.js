@@ -4,6 +4,15 @@ const userInput = document.getElementById("userInput");
 const voiceBtn = document.getElementById("voiceBtn");
 const voiceStatus = document.getElementById("voiceStatus");
 const speakLastBtn = document.getElementById("speakLastBtn");
+const appSidebar = document.getElementById("appSidebar");
+const sidebarToggle = document.getElementById("sidebarToggle");
+const sidebarToggleIcon = document.getElementById("sidebarToggleIcon");
+const viewToggleBtn = document.getElementById("viewToggleBtn");
+const viewToggleIcon = document.getElementById("viewToggleIcon");
+const viewTitle = document.getElementById("viewTitle");
+const viewSubtitle = document.getElementById("viewSubtitle");
+const notesView = document.getElementById("notesView");
+const chatView = document.getElementById("chatView");
 const noteForm = document.getElementById("noteForm");
 const noteTitle = document.getElementById("noteTitle");
 const noteContent = document.getElementById("noteContent");
@@ -20,6 +29,14 @@ const historyNotice = document.getElementById("historyNotice");
 const matchedNotes = document.getElementById("matchedNotes");
 
 let lastBotResponse = "";
+let activeView = "notes";
+let isTyping = false;
+
+function refreshIcons() {
+  if (window.lucide) {
+    window.lucide.createIcons();
+  }
+}
 
 function escapeHtml(value) {
   return String(value)
@@ -43,6 +60,9 @@ function renderChips(items, containerId, className = "token-chip") {
 }
 
 function addChatMessage(role, text) {
+  const emptyChat = chatBox.querySelector(".empty-chat");
+  if (emptyChat) emptyChat.remove();
+
   const message = document.createElement("div");
   message.className = `chat-message ${role}`;
   message.innerHTML = `<small>${role === "user" ? "You" : "Bot"}</small>${escapeHtml(text)}`;
@@ -80,6 +100,7 @@ function startVoiceInput(targetElement, statusElement, triggerButton, append = f
   recognition.onstart = () => {
     statusElement.textContent = "Listening... speak now.";
     triggerButton.disabled = true;
+    triggerButton.classList.add("is-recording");
   };
 
   recognition.onresult = (event) => {
@@ -96,6 +117,7 @@ function startVoiceInput(targetElement, statusElement, triggerButton, append = f
 
   recognition.onend = () => {
     triggerButton.disabled = false;
+    triggerButton.classList.remove("is-recording");
   };
 
   recognition.start();
@@ -155,6 +177,7 @@ async function loadNotes() {
 
 async function sendChatMessage(message) {
   addChatMessage("user", message);
+  showTypingIndicator();
 
   const response = await fetch("api/chat.php", {
     method: "POST",
@@ -163,6 +186,7 @@ async function sendChatMessage(message) {
   });
 
   const data = await response.json();
+  hideTypingIndicator();
   if (!response.ok) {
     throw new Error(data.error || "Unable to process message.");
   }
@@ -176,6 +200,21 @@ async function sendChatMessage(message) {
   await loadHistory();
 }
 
+function showTypingIndicator() {
+  isTyping = true;
+  const typing = document.createElement("div");
+  typing.id = "typingIndicator";
+  typing.className = "chat-message bot";
+  typing.innerHTML = '<div class="typing-indicator"><span></span><span></span><span></span></div>';
+  chatBox.appendChild(typing);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function hideTypingIndicator() {
+  isTyping = false;
+  document.getElementById("typingIndicator")?.remove();
+}
+
 async function loadHistory() {
   const response = await fetch("api/history.php");
   const data = await response.json();
@@ -186,7 +225,7 @@ async function loadHistory() {
   }
 
   if (history.length === 0) {
-    historyTable.innerHTML = '<tr><td colspan="5" class="text-muted">No assistant questions found.</td></tr>';
+    historyTable.innerHTML = '<tr><td colspan="4" class="text-muted">No assistant questions found.</td></tr>';
     return;
   }
 
@@ -198,11 +237,28 @@ async function loadHistory() {
           <td>${escapeHtml(item.question || "")}</td>
           <td>${escapeHtml(item.answer || "")}</td>
           <td>${escapeHtml(Array.isArray(item.matched_note_ids) ? item.matched_note_ids.join(", ") : "")}</td>
-          <td>${escapeHtml(item.created_at)}</td>
         </tr>
       `
     )
     .join("");
+}
+
+function switchView(nextView) {
+  activeView = nextView;
+  notesView.classList.toggle("is-active", activeView === "notes");
+  chatView.classList.toggle("is-active", activeView === "chat");
+
+  if (activeView === "notes") {
+    viewTitle.textContent = "📝 NoteAI Assistant";
+    viewSubtitle.textContent = "Ready to take notes";
+    viewToggleIcon.setAttribute("data-lucide", "message-square");
+  } else {
+    viewTitle.textContent = "🤖 NoteAI Chat Assistant";
+    viewSubtitle.textContent = "Ready to assist";
+    viewToggleIcon.setAttribute("data-lucide", "home");
+  }
+
+  refreshIcons();
 }
 
 function speakText(text) {
@@ -262,6 +318,7 @@ chatForm.addEventListener("submit", async (event) => {
   try {
     await sendChatMessage(message);
   } catch (error) {
+    hideTypingIndicator();
     addChatMessage("bot", error.message);
   }
 });
@@ -290,6 +347,32 @@ clearNotesBtn.addEventListener("click", async () => {
 
 refreshNotesBtn.addEventListener("click", loadNotes);
 
+sidebarToggle.addEventListener("click", () => {
+  appSidebar.classList.toggle("is-collapsed");
+  const isCollapsed = appSidebar.classList.contains("is-collapsed");
+  sidebarToggleIcon.setAttribute("data-lucide", isCollapsed ? "panel-left" : "panel-left-close");
+  refreshIcons();
+});
+
+viewToggleBtn.addEventListener("click", () => {
+  switchView(activeView === "notes" ? "chat" : "notes");
+});
+
+document.querySelectorAll("[data-shortcut]").forEach((button) => {
+  button.addEventListener("click", async () => {
+    const query = button.getAttribute("data-shortcut");
+    if (!query || isTyping) return;
+    switchView("chat");
+    userInput.value = "";
+    try {
+      await sendChatMessage(query);
+    } catch (error) {
+      hideTypingIndicator();
+      addChatMessage("bot", error.message);
+    }
+  });
+});
+
 document.getElementById("clearHistoryBtn")?.addEventListener("click", async () => {
   if (!confirm("Clear all assistant question history?")) return;
   await fetch("api/history.php", { method: "DELETE" });
@@ -301,3 +384,4 @@ refreshHistoryBtn.addEventListener("click", loadHistory);
 
 loadNotes();
 loadHistory();
+refreshIcons();

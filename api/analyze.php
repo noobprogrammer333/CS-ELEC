@@ -1,6 +1,9 @@
 <?php
 
 require_once __DIR__ . '/../php/NlpProcessor.php';
+require_once __DIR__ . '/../php/Auth.php';
+
+requireAuthJson();
 
 try {
     $payload = readJsonBody();

@@ -2,6 +2,9 @@
 
 require_once __DIR__ . '/../php/NlpProcessor.php';
 require_once __DIR__ . '/../php/SupabaseClient.php';
+require_once __DIR__ . '/../php/Auth.php';
+
+requireAuthJson();
 
 $supabase = new SupabaseClient();
 

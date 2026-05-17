@@ -1,3 +1,11 @@
+<?php
+
+require_once __DIR__ . '/php/Auth.php';
+
+requireAuth();
+$currentUser = currentUser();
+$userEmail = $currentUser['email'] ?? 'Signed in';
+?>
 <!doctype html>
 <html lang="en">
   <head>
@@ -34,6 +42,14 @@
           </div>
 
           <div class="sidebar-section">
+            <label class="sidebar-heading">Signed In</label>
+            <div class="status-card user-card">
+              <i data-lucide="user"></i>
+              <span><?= htmlspecialchars($userEmail) ?></span>
+            </div>
+          </div>
+
+          <div class="sidebar-section">
             <label class="sidebar-heading" for="selectedModel">Active AI Mode</label>
             <div class="select-shell">
               <select id="selectedModel" class="form-select">
@@ -54,6 +70,11 @@
           <i data-lucide="trash-2"></i>
           <span class="sidebar-label">Clear All Notes</span>
         </button>
+
+        <a href="logout.php" class="sidebar-logout">
+          <i data-lucide="log-out"></i>
+          <span class="sidebar-label">Log Out</span>
+        </a>
       </aside>
 
       <main class="app-main">

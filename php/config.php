@@ -1,5 +1,9 @@
 <?php
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 function loadEnvFile(string $path): void
 {
     if (!file_exists($path)) {

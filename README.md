@@ -13,6 +13,7 @@ answer lesson questions.
   browser interactivity
 - Backend: PHP
 - Database: Supabase with SQL setup script in `database/nlp_assistant.sql`
+- Authentication: Supabase Auth login/register pages with PHP sessions
 - NLP tools: NLTK and spaCy through `nlp/nlp_processor.py`
 - NLP features:
   - Tokenization
@@ -63,16 +64,20 @@ answer lesson questions.
    php -S 127.0.0.1:8000
    ```
 
-8. Open the app in a browser:
+8. Open the app in a browser and register/log in:
 
    ```text
-   http://127.0.0.1:8000
+   http://127.0.0.1:8000/register.php
+   http://127.0.0.1:8000/login.php
    ```
 
 ## Project Structure
 
 ```text
 index.php                      HTML frontend served by PHP
+login.php                      Supabase Auth login page
+register.php                   Supabase Auth registration page
+logout.php                     Session logout handler
 api/notes.php                  PHP notes save/list/clear endpoint
 api/chat.php                   PHP assistant endpoint that scans saved notes
 api/analyze.php                PHP standalone NLP analysis endpoint
@@ -95,19 +100,23 @@ Supabase credentials are read from `.env`, which is ignored by Git.
 
 ## Demo Checklist
 
-1. Create a lesson note by typing text.
-2. Use Dictate Note to convert speech into note text.
-3. Save the note and show tokenization, lemmas, sentiment, keywords, and
+1. Register or log in.
+2. Create a lesson note by typing text.
+3. Use Dictate Note to convert speech into note text.
+4. Save the note and show tokenization, lemmas, sentiment, keywords, and
    classification.
-4. Ask the AI Assistant about the lesson.
-5. Show that the assistant scans and cites matched notes.
-6. Use Speak Answer for text-to-speech output.
-7. Open the Q&A History section to show Supabase records.
+5. Ask the AI Assistant about the lesson.
+6. Show that the assistant scans and cites matched notes.
+7. Use Speak Answer for text-to-speech output.
+8. Open the Q&A History section to show Supabase records.
 
 ## Validation
 
 ```bash
 php -l index.php
+php -l login.php
+php -l register.php
+php -l logout.php
 php -l api/chat.php
 php -l api/analyze.php
 php -l api/history.php

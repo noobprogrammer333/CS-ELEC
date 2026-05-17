@@ -1,9 +1,10 @@
-# CS-ELEC NLP Assistant
+# CS-ELEC NoteAI Lessons
 
-NLP Assistant is a PHP-based web application for the project requirement
-"NLP-Based Intelligent Web Application Development." It demonstrates natural
-language processing through a chatbot, smart text analyzer, voice input,
-speech output, and Supabase-backed conversation history.
+NoteAI Lessons is a PHP-based web application for the project requirement
+"NLP-Based Intelligent Web Application Development." The core idea is a
+phone-style notes app: students can type or dictate lesson notes, the system
+analyzes those notes with NLP, and an AI assistant scans the saved notes to
+answer lesson questions.
 
 ## Implemented Requirements
 
@@ -15,13 +16,14 @@ speech output, and Supabase-backed conversation history.
 - NLP tools: NLTK and spaCy through `nlp/nlp_processor.py`
 - NLP features:
   - Tokenization
+  - Lemmatization
   - Sentiment analysis
   - Voice-to-text
   - Text-to-speech
-  - Chatbot system
+  - Notes-aware chatbot assistant
   - Keyword extraction
   - Text classification
-- Functional navigation: Chatbot, Text Analyzer, History, About
+- Functional navigation: Notes, AI Assistant, Q&A History, About
 - Required documentation: project documentation, flowchart, and ER diagram
 
 ## Getting Started
@@ -71,9 +73,10 @@ speech output, and Supabase-backed conversation history.
 
 ```text
 index.php                      HTML frontend served by PHP
-api/chat.php                   PHP chatbot endpoint
+api/notes.php                  PHP notes save/list/clear endpoint
+api/chat.php                   PHP assistant endpoint that scans saved notes
 api/analyze.php                PHP standalone NLP analysis endpoint
-api/history.php                PHP Supabase history endpoint
+api/history.php                PHP assistant Q&A history endpoint
 php/config.php                 Environment and JSON helpers
 php/SupabaseClient.php         Supabase REST client
 php/NlpProcessor.php           PHP bridge to Python NLP processor
@@ -92,12 +95,14 @@ Supabase credentials are read from `.env`, which is ignored by Git.
 
 ## Demo Checklist
 
-1. Send a chat message and show the bot response.
-2. Display tokenized input, sentiment, keywords, and classification.
-3. Use the Voice button to convert speech into text.
-4. Use Speak Last Response for text-to-speech output.
-5. Open the History section to show Supabase records.
-6. Open the Smart Text Analyzer for standalone NLP analysis.
+1. Create a lesson note by typing text.
+2. Use Dictate Note to convert speech into note text.
+3. Save the note and show tokenization, lemmas, sentiment, keywords, and
+   classification.
+4. Ask the AI Assistant about the lesson.
+5. Show that the assistant scans and cites matched notes.
+6. Use Speak Answer for text-to-speech output.
+7. Open the Q&A History section to show Supabase records.
 
 ## Validation
 
@@ -106,6 +111,7 @@ php -l index.php
 php -l api/chat.php
 php -l api/analyze.php
 php -l api/history.php
+php -l api/notes.php
 python3 -m py_compile nlp/nlp_processor.py tests/test_nlp_processor.py
 python3 -m unittest tests/test_nlp_processor.py
 ```

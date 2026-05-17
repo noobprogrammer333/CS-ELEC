@@ -28,7 +28,8 @@ loadEnvFile(dirname(__DIR__) . '/.env');
 
 define('SUPABASE_URL', rtrim((string) getenv('SUPABASE_URL'), '/'));
 define('SUPABASE_KEY', (string) getenv('SUPABASE_KEY'));
-define('SUPABASE_CHATS_TABLE', getenv('SUPABASE_CHATS_TABLE') ?: 'chats');
+define('SUPABASE_NOTES_TABLE', getenv('SUPABASE_NOTES_TABLE') ?: 'notes');
+define('SUPABASE_CHATS_TABLE', getenv('SUPABASE_CHATS_TABLE') ?: 'assistant_chats');
 define('PYTHON_BIN', getenv('PYTHON_BIN') ?: 'python3');
 define('NLP_PROCESSOR', dirname(__DIR__) . '/nlp/nlp_processor.py');
 

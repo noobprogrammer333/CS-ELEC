@@ -2,15 +2,15 @@
 
 ## Project Title
 
-NLP Assistant: PHP Chatbot and Text Analyzer with Supabase
+NoteAI Lessons: Speech-to-Text Notes and AI Lesson Assistant
 
 ## Project Overview
 
-This web application demonstrates Natural Language Processing (NLP) by
-accepting human language through typed text or browser microphone input,
-processing the language through a PHP backend, calling Python NLP tools, and
-returning intelligent analysis and chatbot responses. Conversation history is
-stored in Supabase.
+This web application demonstrates Natural Language Processing (NLP) through a
+phone-style notes workflow. Students can type or dictate lesson notes, save
+those notes to Supabase, and see NLP analysis for each note. A chatbot-style AI
+assistant then scans saved notes and returns the lesson content that matches a
+student's question.
 
 ## Main Objective
 
@@ -29,32 +29,36 @@ analyze, classify, and respond to user input in natural language.
 ## Implemented NLP Concepts
 
 1. Tokenization
-   - NLTK tokenizes the user message and the frontend displays each token.
+   - NLTK tokenizes each saved note and the frontend displays each token.
 
-2. Sentiment Analysis
+2. Lemmatization
+   - spaCy normalizes note words to lemma/base forms for better note search.
+
+3. Sentiment Analysis
    - NLTK VADER classifies messages as Positive, Negative, or Neutral.
    - A word-list fallback is included for demo reliability.
 
-3. Voice-to-Text
-   - The Voice button uses the browser microphone through the Web Speech API.
+4. Voice-to-Text
+   - The Dictate Note button uses the browser microphone and writes speech into
+     the note editor.
 
-4. Text-to-Speech
-   - The Speak Last Response button reads the chatbot response aloud through the
+5. Text-to-Speech
+   - The Speak Answer button reads the assistant response aloud through the
      browser Speech Synthesis API.
 
-5. Chatbot System
-   - The chat interface accepts user messages, generates bot responses, and saves
-     the conversation through the PHP backend.
+6. Notes-Aware Chatbot System
+   - The assistant accepts direct lesson questions, scans saved notes, returns
+     matching notes, and saves the Q&A through the PHP backend.
 
-6. Keyword Extraction
+7. Keyword Extraction
    - spaCy processes the text and helps identify important terms after stop-word
      filtering.
 
-7. Text Classification
+8. Text Classification
    - Rule-based classification labels messages as Complaint, Inquiry, Feedback,
      Command, or General Message.
 
-8. Entity Extraction
+9. Entity Extraction
    - spaCy entities are included when the installed spaCy model supports entity
      recognition.
 
@@ -63,50 +67,73 @@ analyze, classify, and respond to user input in natural language.
 - User input through text or voice
 - PHP NLP API endpoints
 - Python NLP processor using NLTK and spaCy
-- Chatbot response generation
+- Phone-style note creation
+- Speech-to-text note writing
+- NLP metadata for saved notes
+- Notes-aware chatbot response generation
 - Text output and speech output
-- Supabase storage for conversation history
+- Supabase storage for notes and assistant Q&A history
 - Responsive HTML interface
-- Navigation system for Chatbot, Analyzer, History, and About sections
+- Navigation system for Notes, AI Assistant, Q&A History, and About sections
 - Supabase SQL schema deliverable
 - System flowchart and ER diagram files
 
 ## System Workflow
 
-1. User types a message or records voice input.
-2. JavaScript sends the message to a PHP endpoint using `fetch`.
+1. User types a lesson note or records voice input into the note editor.
+2. JavaScript sends the note to `api/notes.php`.
 3. PHP calls `nlp/nlp_processor.py`.
-4. The Python processor uses NLTK and spaCy for tokenization, sentiment,
-   keyword extraction, entity extraction, and classification.
-5. PHP stores the conversation and NLP metadata in Supabase through the REST API.
-6. The frontend displays the chat response and NLP analysis.
-7. The user may click Speak Last Response to hear the output.
+4. The Python processor uses NLTK and spaCy for tokenization, lemmatization,
+   sentiment, keyword extraction, entity extraction, and classification.
+5. PHP stores the note and NLP metadata in Supabase.
+6. User asks the AI assistant a lesson question.
+7. `api/chat.php` analyzes the question and scans saved notes by keywords,
+   lemmas, and content matches.
+8. The assistant returns matching lesson notes and the answer can be spoken
+   aloud.
 
 ## Backend Routes
 
 | Route | Method | Purpose |
 | --- | --- | --- |
 | `/index.php` | GET | Loads the main HTML web interface |
-| `/api/chat.php` | POST | Processes chat input, saves to Supabase, returns bot response |
+| `/api/notes.php` | GET | Lists saved notes from Supabase |
+| `/api/notes.php` | POST | Saves a note with NLP metadata |
+| `/api/notes.php` | DELETE | Clears saved notes |
+| `/api/chat.php` | POST | Scans saved notes and returns an assistant answer |
 | `/api/analyze.php` | POST | Runs NLP analysis without saving chat history |
-| `/api/history.php` | GET | Returns saved Supabase conversation records |
-| `/api/history.php` | DELETE | Clears saved Supabase conversation records |
+| `/api/history.php` | GET | Returns saved assistant Q&A records |
+| `/api/history.php` | DELETE | Clears assistant Q&A records |
 
 ## Supabase Database Design
 
-Table: `chats`
+Table: `notes`
 
 | Field | Type | Description |
 | --- | --- | --- |
 | `id` | bigint | Primary key |
-| `user_message` | text | User input |
-| `bot_response` | text | Generated chatbot answer |
+| `title` | text | Note title |
+| `content` | text | Full lesson note |
 | `tokens` | jsonb | Token list |
+| `lemmas` | jsonb | Lemmatized terms |
 | `keywords` | jsonb | Keyword list |
 | `sentiment` | varchar | Positive, Negative, or Neutral |
 | `sentiment_score` | numeric | Numeric sentiment score |
 | `classification` | varchar | Message category |
 | `entities` | jsonb | spaCy entities |
+| `created_at` | timestamptz | Record creation time |
+| `updated_at` | timestamptz | Last update time |
+
+Table: `assistant_chats`
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | bigint | Primary key |
+| `question` | text | Student question |
+| `answer` | text | Assistant response from matching notes |
+| `query_tokens` | jsonb | Tokenized question |
+| `query_keywords` | jsonb | Question keywords |
+| `matched_note_ids` | jsonb | Notes used as sources |
 | `created_at` | timestamptz | Record creation time |
 
 ## How to Run
@@ -129,14 +156,16 @@ Open `http://127.0.0.1:8000` in a browser.
 
 1. Open the home page and explain the selected stack: HTML, PHP, Supabase,
    NLTK, and spaCy.
-2. Type: `Hello, I love this helpful NLP chatbot`.
-3. Show the bot reply, tokens, sentiment, keywords, and classification.
-4. Click Speak Last Response.
-5. Click Voice and speak a short message if the browser supports microphone
-   access.
-6. Open Smart Text Analyzer and analyze another sentence.
-7. Open Supabase Conversation History and show saved records.
-8. Explain the SQL export and diagrams in the repository.
+2. Create a note titled `Software Implementation Lesson`.
+3. Use Dictate Note or type: `Software implementation includes training, data
+   migration, testing, and cutover`.
+4. Save the note and show tokens, lemmas, sentiment, keywords, and
+   classification.
+5. Ask: `What are the steps in software implementation?`.
+6. Show that the assistant scans notes and returns the matching lesson.
+7. Click Speak Answer.
+8. Open Assistant Q&A History and show saved records.
+9. Explain the SQL export and diagrams in the repository.
 
 ## Common Oral Defense Answers
 
@@ -147,14 +176,16 @@ analyze, and respond to human language.
 
 ### How is NLP applied in this system?
 
-The PHP backend sends user input to a Python NLP processor. NLTK performs
-tokenization and sentiment analysis, while spaCy helps with keyword and entity
-processing. The results guide the chatbot response.
+The PHP backend sends each note and question to a Python NLP processor. NLTK
+performs tokenization and sentiment analysis, while spaCy helps with
+lemmatization, keyword extraction, and entity processing. The assistant compares
+question keywords with saved note keywords and lemmas to find relevant lessons.
 
 ### How does the chatbot generate responses?
 
-The chatbot uses transparent rule-based logic. It checks the detected intent,
-sentiment, keywords, and classification, then chooses an appropriate response.
+The assistant analyzes the question, scans saved notes in Supabase, ranks notes
+by keyword, lemma, and content matches, then returns the best matching lesson
+snippets as its answer.
 
 ### How does sentiment analysis work?
 

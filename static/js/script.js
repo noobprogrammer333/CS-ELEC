@@ -4,13 +4,20 @@ const userInput = document.getElementById("userInput");
 const voiceBtn = document.getElementById("voiceBtn");
 const voiceStatus = document.getElementById("voiceStatus");
 const speakLastBtn = document.getElementById("speakLastBtn");
-const clearHistoryBtn = document.getElementById("clearHistoryBtn");
+const noteForm = document.getElementById("noteForm");
+const noteTitle = document.getElementById("noteTitle");
+const noteContent = document.getElementById("noteContent");
+const noteVoiceBtn = document.getElementById("noteVoiceBtn");
+const noteVoiceStatus = document.getElementById("noteVoiceStatus");
+const clearNotesBtn = document.getElementById("clearNotesBtn");
+const refreshNotesBtn = document.getElementById("refreshNotesBtn");
+const notesList = document.getElementById("notesList");
+const notesNotice = document.getElementById("notesNotice");
+const noteStorageNotice = document.getElementById("noteStorageNotice");
 const refreshHistoryBtn = document.getElementById("refreshHistoryBtn");
 const historyTable = document.getElementById("historyTable");
 const historyNotice = document.getElementById("historyNotice");
-const analyzeBtn = document.getElementById("analyzeBtn");
-const analyzerInput = document.getElementById("analyzerInput");
-const analyzerOutput = document.getElementById("analyzerOutput");
+const matchedNotes = document.getElementById("matchedNotes");
 
 let lastBotResponse = "";
 
@@ -47,9 +54,103 @@ function updateAnalysisPanel(analysis) {
   document.getElementById("sentimentResult").textContent =
     `${analysis.sentiment} (${analysis.sentiment_score})`;
   document.getElementById("classificationResult").textContent = analysis.classification;
-  document.getElementById("responsePreview").textContent = analysis.response;
   renderChips(analysis.tokens, "tokenList");
+  renderChips(analysis.lemmas, "lemmaList");
   renderChips(analysis.keywords, "keywordList", "token-chip keyword-chip");
+}
+
+function showNotice(element, message) {
+  if (!element) return;
+  element.classList.toggle("d-none", !message);
+  element.textContent = message || "";
+}
+
+function startVoiceInput(targetElement, statusElement, triggerButton, append = false) {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    statusElement.textContent = "Voice input is not supported by this browser.";
+    return;
+  }
+
+  const recognition = new SpeechRecognition();
+  recognition.lang = "en-US";
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  recognition.onstart = () => {
+    statusElement.textContent = "Listening... speak now.";
+    triggerButton.disabled = true;
+  };
+
+  recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript;
+    targetElement.value = append && targetElement.value.trim()
+      ? `${targetElement.value.trim()} ${transcript}`
+      : transcript;
+    statusElement.textContent = `Captured: ${transcript}`;
+  };
+
+  recognition.onerror = (event) => {
+    statusElement.textContent = `Voice error: ${event.error}`;
+  };
+
+  recognition.onend = () => {
+    triggerButton.disabled = false;
+  };
+
+  recognition.start();
+}
+
+async function saveNote(title, content) {
+  const response = await fetch("api/notes.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title, content }),
+  });
+
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.error || data.storage?.warning || "Unable to save note.");
+  }
+
+  updateAnalysisPanel(data.analysis);
+  showNotice(noteStorageNotice, data.storage?.warning || "");
+  await loadNotes();
+}
+
+function renderNotes(notes) {
+  if (!notes || notes.length === 0) {
+    notesList.innerHTML = '<p class="text-muted mb-0">No saved notes yet. Create one above.</p>';
+    return;
+  }
+
+  notesList.innerHTML = notes
+    .map((note) => {
+      const keywords = Array.isArray(note.keywords) ? note.keywords : [];
+      const lemmas = Array.isArray(note.lemmas) ? note.lemmas : [];
+      return `
+        <div class="col-md-6 col-xl-4">
+          <article class="note-card h-100">
+            <h3 class="h5">${escapeHtml(note.title || "Untitled Note")}</h3>
+            <p>${escapeHtml(note.content || "")}</p>
+            <div class="mb-2">
+              ${keywords.slice(0, 5).map((keyword) => `<span class="token-chip keyword-chip">${escapeHtml(keyword)}</span>`).join("")}
+            </div>
+            <small class="text-muted d-block">Sentiment: ${escapeHtml(note.sentiment || "N/A")}</small>
+            <small class="text-muted d-block">Class: ${escapeHtml(note.classification || "N/A")}</small>
+            <small class="text-muted d-block">Lemmas: ${escapeHtml(lemmas.slice(0, 6).join(", "))}</small>
+          </article>
+        </div>
+      `;
+    })
+    .join("");
+}
+
+async function loadNotes() {
+  const response = await fetch("api/notes.php");
+  const data = await response.json();
+  showNotice(notesNotice, data.warning || "");
+  renderNotes(data.notes || []);
 }
 
 async function sendChatMessage(message) {
@@ -71,7 +172,7 @@ async function sendChatMessage(message) {
   if (data.storage && data.storage.warning) {
     addChatMessage("bot", `Storage notice: ${data.storage.warning}`);
   }
-  updateAnalysisPanel(data.analysis);
+  renderMatchedNotes(data.matches || []);
   await loadHistory();
 }
 
@@ -85,7 +186,7 @@ async function loadHistory() {
   }
 
   if (history.length === 0) {
-    historyTable.innerHTML = '<tr><td colspan="6" class="text-muted">No chat records found.</td></tr>';
+    historyTable.innerHTML = '<tr><td colspan="5" class="text-muted">No assistant questions found.</td></tr>';
     return;
   }
 
@@ -94,10 +195,9 @@ async function loadHistory() {
       (item) => `
         <tr>
           <td>${item.id}</td>
-          <td>${escapeHtml(item.user_message)}</td>
-          <td>${escapeHtml(item.bot_response)}</td>
-          <td>${escapeHtml(item.sentiment)}</td>
-          <td>${escapeHtml(item.classification)}</td>
+          <td>${escapeHtml(item.question || "")}</td>
+          <td>${escapeHtml(item.answer || "")}</td>
+          <td>${escapeHtml(Array.isArray(item.matched_note_ids) ? item.matched_note_ids.join(", ") : "")}</td>
           <td>${escapeHtml(item.created_at)}</td>
         </tr>
       `
@@ -118,80 +218,40 @@ function speakText(text) {
   window.speechSynthesis.speak(utterance);
 }
 
-function startVoiceInput() {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRecognition) {
-    voiceStatus.textContent = "Voice input is not supported by this browser.";
+function renderMatchedNotes(notes) {
+  if (!notes || notes.length === 0) {
+    matchedNotes.innerHTML = '<p class="text-muted mb-0">No matching notes found for this question.</p>';
     return;
   }
 
-  const recognition = new SpeechRecognition();
-  recognition.lang = "en-US";
-  recognition.interimResults = false;
-  recognition.maxAlternatives = 1;
-
-  recognition.onstart = () => {
-    voiceStatus.textContent = "Listening... speak now.";
-    voiceBtn.disabled = true;
-  };
-
-  recognition.onresult = (event) => {
-    const transcript = event.results[0][0].transcript;
-    userInput.value = transcript;
-    voiceStatus.textContent = `Captured: ${transcript}`;
-  };
-
-  recognition.onerror = (event) => {
-    voiceStatus.textContent = `Voice error: ${event.error}`;
-  };
-
-  recognition.onend = () => {
-    voiceBtn.disabled = false;
-  };
-
-  recognition.start();
+  matchedNotes.innerHTML = notes
+    .map((note) => `
+      <article class="matched-note mb-3">
+        <h3 class="h6">${escapeHtml(note.title || "Untitled Note")}</h3>
+        <p class="mb-2">${escapeHtml(note.content || "")}</p>
+        <small class="text-muted">Score: ${escapeHtml(note.match_score || 0)}</small>
+      </article>
+    `)
+    .join("");
 }
 
-function renderAnalyzerOutput(analysis) {
-  analyzerOutput.innerHTML = `
-    <div class="row g-3 mb-3">
-      <div class="col-md-4">
-        <div class="metric-card">
-          <span class="metric-label">Sentiment</span>
-          <strong>${escapeHtml(analysis.sentiment)} (${analysis.sentiment_score})</strong>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="metric-card">
-          <span class="metric-label">Classification</span>
-          <strong>${escapeHtml(analysis.classification)}</strong>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="metric-card">
-          <span class="metric-label">Token Count</span>
-          <strong>${analysis.tokens.length}</strong>
-        </div>
-      </div>
-    </div>
-    <h3 class="h6">Tokens</h3>
-    <div class="token-area mb-3">
-      ${analysis.tokens.map((token) => `<span class="token-chip">${escapeHtml(token)}</span>`).join("")}
-    </div>
-    <h3 class="h6">Keywords</h3>
-    <div class="token-area mb-3">
-      ${
-        analysis.keywords.length
-          ? analysis.keywords.map((keyword) => `<span class="token-chip keyword-chip">${escapeHtml(keyword)}</span>`).join("")
-          : '<span class="text-muted">None detected.</span>'
-      }
-    </div>
-    <h3 class="h6">Suggested Chatbot Response</h3>
-    <p class="response-preview">${escapeHtml(analysis.response)}</p>
-    <h3 class="h6">NLP Tools</h3>
-    <p class="mb-0">${escapeHtml((analysis.nlp_tools || []).join(" + "))}</p>
-  `;
-}
+noteForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const title = noteTitle.value.trim();
+  const content = noteContent.value.trim();
+  if (!content) {
+    showNotice(noteStorageNotice, "Please write or dictate note content first.");
+    return;
+  }
+
+  try {
+    await saveNote(title, content);
+    noteTitle.value = "";
+    noteContent.value = "";
+  } catch (error) {
+    showNotice(noteStorageNotice, error.message);
+  }
+});
 
 chatForm.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -206,7 +266,13 @@ chatForm.addEventListener("submit", async (event) => {
   }
 });
 
-voiceBtn.addEventListener("click", startVoiceInput);
+noteVoiceBtn.addEventListener("click", () => {
+  startVoiceInput(noteContent, noteVoiceStatus, noteVoiceBtn, true);
+});
+
+voiceBtn.addEventListener("click", () => {
+  startVoiceInput(userInput, voiceStatus, voiceBtn, false);
+});
 
 speakLastBtn.addEventListener("click", () => {
   if (!lastBotResponse) {
@@ -216,8 +282,16 @@ speakLastBtn.addEventListener("click", () => {
   speakText(lastBotResponse);
 });
 
-clearHistoryBtn.addEventListener("click", async () => {
-  if (!confirm("Clear all saved conversation history?")) return;
+clearNotesBtn.addEventListener("click", async () => {
+  if (!confirm("Clear all saved notes?")) return;
+  await fetch("api/notes.php", { method: "DELETE" });
+  await loadNotes();
+});
+
+refreshNotesBtn.addEventListener("click", loadNotes);
+
+document.getElementById("clearHistoryBtn")?.addEventListener("click", async () => {
+  if (!confirm("Clear all assistant question history?")) return;
   await fetch("api/history.php", { method: "DELETE" });
   chatBox.innerHTML = "";
   await loadHistory();
@@ -225,26 +299,5 @@ clearHistoryBtn.addEventListener("click", async () => {
 
 refreshHistoryBtn.addEventListener("click", loadHistory);
 
-analyzeBtn.addEventListener("click", async () => {
-  const message = analyzerInput.value.trim();
-  if (!message) {
-    analyzerOutput.innerHTML = '<p class="text-danger mb-0">Please enter text to analyze.</p>';
-    return;
-  }
-
-  const response = await fetch("api/analyze.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message }),
-  });
-  const data = await response.json();
-
-  if (!response.ok) {
-    analyzerOutput.innerHTML = `<p class="text-danger mb-0">${escapeHtml(data.error)}</p>`;
-    return;
-  }
-
-  renderAnalyzerOutput(data.analysis);
-});
-
+loadNotes();
 loadHistory();

@@ -194,6 +194,18 @@ def extract_keywords(doc, normalized_tokens):
     return [keyword for keyword, _ in Counter(candidates).most_common(8)]
 
 
+def extract_lemmas(doc, normalized_tokens):
+    lemmas = []
+    for token in doc:
+        text = token.text.lower()
+        if not re.search(r"[a-z0-9]", text):
+            continue
+        lemma = token.lemma_.lower() if token.lemma_ else text
+        lemmas.append(lemma)
+
+    return lemmas or normalized_tokens
+
+
 def classify_text(normalized_tokens):
     token_set = set(normalized_tokens)
     scores = {
@@ -248,6 +260,7 @@ def analyze_text(text):
     normalized_tokens = [token.lower() for token in tokens if re.search(r"[A-Za-z0-9]", token)]
     sentiment, sentiment_score = analyze_sentiment(text, normalized_tokens)
     keywords = extract_keywords(doc, normalized_tokens)
+    lemmas = extract_lemmas(doc, normalized_tokens)
     classification = classify_text(normalized_tokens)
     entities = [
         {"text": entity.text, "label": entity.label_}
@@ -257,6 +270,7 @@ def analyze_text(text):
     analysis = {
         "tokens": tokens,
         "normalized_tokens": normalized_tokens,
+        "lemmas": lemmas,
         "sentiment": sentiment,
         "sentiment_score": sentiment_score,
         "keywords": keywords,

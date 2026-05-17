@@ -27,6 +27,7 @@ class NlpProcessorTest(unittest.TestCase):
         self.assertIn("NLTK", analysis["nlp_tools"])
         self.assertIn("spaCy", analysis["nlp_tools"])
         self.assertTrue(analysis["keywords"])
+        self.assertTrue(analysis["lemmas"])
 
     def test_question_classification(self):
         analysis = self.analyze("How does sentiment analysis work?")

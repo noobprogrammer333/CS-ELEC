@@ -1,23 +1,27 @@
 flowchart TD
-    A[User opens web application] --> B{Input method}
-    B -->|Typed text| C[Enter message in chat box]
-    B -->|Voice input| D[Browser Web Speech API converts speech to text]
+    A[User opens NoteAI Lessons] --> B{Create note input}
+    B -->|Typed text| C[Write lesson in note editor]
+    B -->|Dictate Note| D[Browser Web Speech API writes speech into note]
     D --> C
-    C --> E[JavaScript sends message to PHP api/chat.php]
-    E --> F[PHP backend validates input]
+    C --> E[JavaScript sends note to PHP api/notes.php]
+    E --> F[PHP validates note title and content]
     F --> G[PHP calls Python NLP processor]
     G --> H[NLTK tokenization]
-    G --> I[NLTK VADER sentiment analysis]
-    G --> J[spaCy keyword and entity processing]
-    G --> K[Rule-based text classification]
-    H --> L[Rule-based chatbot response]
-    I --> L
-    J --> L
-    K --> L
-    L --> M[PHP saves chat and NLP metadata to Supabase]
-    M --> N[Return JSON response to frontend]
-    N --> O[Display bot response and NLP output]
-    O --> P{Speak output?}
-    P -->|Yes| Q[Browser Speech Synthesis API reads response aloud]
-    P -->|No| R[End interaction]
-    Q --> R
+    G --> I[spaCy lemmatization]
+    G --> J[NLTK VADER sentiment analysis]
+    G --> K[spaCy keyword and entity processing]
+    G --> L[Rule-based text classification]
+    H --> M[Save note and NLP metadata to Supabase notes table]
+    I --> M
+    J --> M
+    K --> M
+    L --> M
+    M --> N[Display saved note and NLP output]
+    N --> O[User asks assistant a lesson question]
+    O --> P[PHP api/chat.php analyzes question]
+    P --> Q[Scan saved notes by keywords, lemmas, and content]
+    Q --> R[Return matching lesson notes as answer]
+    R --> S{Speak answer?}
+    S -->|Yes| T[Browser Speech Synthesis API reads answer aloud]
+    S -->|No| U[End interaction]
+    T --> U

@@ -1,0 +1,114 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+5 0 obj
+<< /Length 1940 >>
+stream
+BT
+/F1 11 Tf
+50 780 Td
+14 TL
+(NLP-Based Intelligent Web Application Development) Tj
+T*
+() Tj
+T*
+(Project Title: NLP Assistant - Intelligent Chatbot and Text Analyzer) Tj
+T*
+() Tj
+T*
+(Overview:) Tj
+T*
+(This Flask web application processes human language through typed text or browser voice input.) Tj
+T*
+(It returns chatbot responses, visible NLP analysis, speech output, and database-backed history.) Tj
+T*
+() Tj
+T*
+(Technology Stack:) Tj
+T*
+(- Frontend: HTML, CSS, Bootstrap, JavaScript) Tj
+T*
+(- Backend: Python Flask) Tj
+T*
+(- NLP: NLTK with rule-based fallbacks) Tj
+T*
+(- Database: SQLite runtime database and SQL export file) Tj
+T*
+(- Speech: Browser Web Speech API and Speech Synthesis API) Tj
+T*
+() Tj
+T*
+(Implemented NLP Concepts:) Tj
+T*
+(1. Tokenization - displays tokenized user input.) Tj
+T*
+(2. Sentiment Analysis - classifies Positive, Negative, or Neutral.) Tj
+T*
+(3. Voice-to-Text - microphone input converts speech to text.) Tj
+T*
+(4. Text-to-Speech - Speak button reads chatbot output aloud.) Tj
+T*
+(5. Chatbot System - user vs bot interface with stored history.) Tj
+T*
+(6. Keyword Extraction - highlights important words from input.) Tj
+T*
+(7. Text Classification - labels messages as Complaint, Inquiry, Feedback, Command, or General.) Tj
+T*
+() Tj
+T*
+(System Workflow:) Tj
+T*
+(User input -> JavaScript fetch request -> Flask route -> NLP engine -> database save -> JSON response -> UI display.) Tj
+T*
+() Tj
+T*
+(Database Table: chats) Tj
+T*
+(Fields: id, user_message, bot_response, tokens, keywords, sentiment, sentiment_score, classification, created_at.) Tj
+T*
+() Tj
+T*
+(How to Run:) Tj
+T*
+(python3 -m venv .venv) Tj
+T*
+(source .venv/bin/activate) Tj
+T*
+(pip install -r requirements.txt) Tj
+T*
+(python3 app.py) Tj
+T*
+(Open http://127.0.0.1:5000) Tj
+T*
+() Tj
+T*
+(Defense Demo Checklist:) Tj
+T*
+(Show chatbot, token list, sentiment result, keywords, classification, voice input, speech output, and history table.) Tj
+T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000000311 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+2303
+%%EOF

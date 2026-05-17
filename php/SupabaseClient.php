@@ -6,13 +6,20 @@ class SupabaseClient
 {
     private string $baseUrl;
     private string $apiKey;
-    private string $table;
+    private string $notesTable;
+    private string $chatsTable;
 
-    public function __construct(string $baseUrl = SUPABASE_URL, string $apiKey = SUPABASE_KEY, string $table = SUPABASE_CHATS_TABLE)
+    public function __construct(
+        string $baseUrl = SUPABASE_URL,
+        string $apiKey = SUPABASE_KEY,
+        string $notesTable = SUPABASE_NOTES_TABLE,
+        string $chatsTable = SUPABASE_CHATS_TABLE
+    )
     {
         $this->baseUrl = $baseUrl;
         $this->apiKey = $apiKey;
-        $this->table = $table;
+        $this->notesTable = $notesTable;
+        $this->chatsTable = $chatsTable;
     }
 
     public function isConfigured(): bool
@@ -20,20 +27,36 @@ class SupabaseClient
         return $this->baseUrl !== '' && $this->apiKey !== '';
     }
 
-    public function insertChat(array $record): array
+    public function insertNote(array $record): array
     {
-        return $this->request('POST', '/' . $this->table, $record, ['Prefer: return=representation']);
+        return $this->request('POST', '/' . $this->notesTable, $record, ['Prefer: return=representation']);
     }
 
-    public function fetchHistory(int $limit = 50): array
+    public function fetchNotes(int $limit = 100): array
     {
-        $query = sprintf('/%s?select=*&order=created_at.desc&limit=%d', $this->table, $limit);
+        $query = sprintf('/%s?select=*&order=updated_at.desc&limit=%d', $this->notesTable, $limit);
         return $this->request('GET', $query);
     }
 
-    public function clearHistory(): array
+    public function clearNotes(): array
     {
-        return $this->request('DELETE', '/' . $this->table . '?id=not.is.null', null);
+        return $this->request('DELETE', '/' . $this->notesTable . '?id=not.is.null', null);
+    }
+
+    public function insertChat(array $record): array
+    {
+        return $this->request('POST', '/' . $this->chatsTable, $record, ['Prefer: return=representation']);
+    }
+
+    public function fetchChatHistory(int $limit = 50): array
+    {
+        $query = sprintf('/%s?select=*&order=created_at.desc&limit=%d', $this->chatsTable, $limit);
+        return $this->request('GET', $query);
+    }
+
+    public function clearChatHistory(): array
+    {
+        return $this->request('DELETE', '/' . $this->chatsTable . '?id=not.is.null', null);
     }
 
     private function request(string $method, string $path, ?array $payload = null, array $extraHeaders = []): array

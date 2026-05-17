@@ -12,7 +12,7 @@ endobj
 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
 endobj
 5 0 obj
-<< /Length 2214 >>
+<< /Length 2429 >>
 stream
 BT
 /F1 10 Tf
@@ -22,7 +22,7 @@ BT
 T*
 () Tj
 T*
-(Project Title: NLP Assistant - PHP Chatbot and Text Analyzer with Supabase) Tj
+(Project Title: NoteAI Lessons - Speech-to-Text Notes and AI Lesson Assistant) Tj
 T*
 () Tj
 T*
@@ -40,45 +40,49 @@ T*
 T*
 () Tj
 T*
-(Overview:) Tj
+(Project Idea:) Tj
 T*
-(The system accepts typed text or browser voice input, sends it to PHP endpoints,) Tj
+(The app works like cellphone notes. Students type or dictate lesson notes.) Tj
 T*
-(calls a Python NLP processor using NLTK and spaCy, returns analysis and chatbot) Tj
+(Every saved note is analyzed with NLP and stored in Supabase. The AI assistant) Tj
 T*
-(responses, and stores conversation records in Supabase.) Tj
+(then scans saved notes to answer direct lesson questions.) Tj
 T*
 () Tj
 T*
 (Implemented NLP Concepts:) Tj
 T*
-(1. Tokenization - NLTK displays tokenized user input.) Tj
+(1. Tokenization - NLTK displays tokenized note text.) Tj
 T*
-(2. Sentiment Analysis - NLTK VADER classifies Positive, Negative, or Neutral.) Tj
+(2. Lemmatization - spaCy provides base forms for better search.) Tj
 T*
-(3. Voice-to-Text - browser microphone converts speech to text.) Tj
+(3. Sentiment Analysis - NLTK VADER classifies Positive, Negative, or Neutral.) Tj
 T*
-(4. Text-to-Speech - Speak button reads chatbot output aloud.) Tj
+(4. Voice-to-Text - Dictate Note writes speech into the note editor.) Tj
 T*
-(5. Chatbot System - user vs bot interface with stored Supabase history.) Tj
+(5. Text-to-Speech - Speak Answer reads assistant output aloud.) Tj
 T*
-(6. Keyword Extraction - spaCy-assisted important term extraction.) Tj
+(6. Chatbot Assistant - scans saved notes and returns matching lessons.) Tj
 T*
-(7. Text Classification - Complaint, Inquiry, Feedback, Command, or General.) Tj
+(7. Keyword Extraction - spaCy-assisted important term extraction.) Tj
 T*
-(8. Entity Extraction - spaCy entities when the English model is installed.) Tj
+(8. Text Classification - Complaint, Inquiry, Feedback, Command, or General.) Tj
 T*
 () Tj
 T*
 (System Workflow:) Tj
 T*
-(User input -> JavaScript fetch -> PHP endpoint -> Python NLP processor -> Supabase save -> JSON response -> UI display.) Tj
+(Create note -> speech/text input -> PHP notes API -> Python NLTK/spaCy NLP -> Supabase notes table.) Tj
+T*
+(Ask question -> PHP chat API -> analyze query -> scan note keywords/lemmas/content -> return lesson answer.) Tj
 T*
 () Tj
 T*
-(Supabase Table: chats) Tj
+(Supabase Tables:) Tj
 T*
-(Fields: id, user_message, bot_response, tokens, keywords, sentiment, sentiment_score, classification, entities, created_at.) Tj
+(notes: id, title, content, tokens, lemmas, keywords, sentiment, sentiment_score, classification, entities, created_at, updated_at.) Tj
+T*
+(assistant_chats: id, question, answer, query_tokens, query_keywords, matched_note_ids, created_at.) Tj
 T*
 () Tj
 T*
@@ -102,7 +106,7 @@ T*
 T*
 (Defense Demo Checklist:) Tj
 T*
-(Show chatbot, token list, sentiment result, keywords, classification, voice input, speech output, and Supabase history table.) Tj
+(Create a note by voice, show tokens/lemmas/sentiment/keywords, ask the assistant about the lesson, show matched notes, and use Speak Answer.) Tj
 T*
 ET
 endstream
@@ -118,5 +122,5 @@ xref
 trailer
 << /Size 6 /Root 1 0 R >>
 startxref
-2577
+2792
 %%EOF

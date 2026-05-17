@@ -5,7 +5,7 @@ require_once __DIR__ . '/../php/SupabaseClient.php';
 $supabase = new SupabaseClient();
 
 if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
-    $result = $supabase->clearHistory();
+    $result = $supabase->clearChatHistory();
     sendJson([
         'cleared' => $result['ok'],
         'warning' => $result['ok'] ? null : $result['error'],
@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     sendJson(['error' => 'Method not allowed.'], 405);
 }
 
-$result = $supabase->fetchHistory();
+$result = $supabase->fetchChatHistory();
 if (!$result['ok']) {
     sendJson([
         'history' => [],

@@ -1,13 +1,25 @@
 erDiagram
-    CHATS {
+    NOTES {
         bigint id PK
-        text user_message
-        text bot_response
+        text title
+        text content
         jsonb tokens
+        jsonb lemmas
         jsonb keywords
         varchar sentiment
         numeric sentiment_score
         varchar classification
         jsonb entities
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    ASSISTANT_CHATS {
+        bigint id PK
+        text question
+        text answer
+        jsonb query_tokens
+        jsonb query_keywords
+        jsonb matched_note_ids
         timestamptz created_at
     }
